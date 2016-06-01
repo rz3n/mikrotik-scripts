@@ -54,7 +54,13 @@
 
 # -----------------------------------------------
 # Delete static route (delete all routes with the comment)
-# ex. $delRoute
 :global delRoute do={
 	/ip route remove [/ip route find comment="Temporary Route"]
 }
+
+
+# -----------------------------------------------
+# functions to enable/disable logs
+:global infoLogOn do={ /system logging enable 0 }
+:global infoLogOff do={ /system logging disable 0 }
+:global warnLogMsg do={ /log warning message=$msg }
