@@ -34,7 +34,7 @@
 ## function to sent email
 ##
 :global sendEmail do={
-	/tool e-mail send to=suporte@kurotel.com.br subject="Mikrotik - Link Down" body=$msg
+	/tool e-mail send to=notify@yourmail.com subject="Mikrotik - Link Down" body=$msg
 }
 
 ## function to enable/disable route tables
@@ -43,18 +43,18 @@
 	/ip route set [/ip route find gateway=$gw routing-mark=$mark] disabled=$disabled
 }
 
-## functino to add static routes
+## function to add static routes
 ##
 :global addRoute do={
 	:if ([/ip route find where dst-address="$destino/32"] = "") do={
-		/ip route add dst-address="$destino/32" gateway=$gateway distance=1 comment="Rota Temporaria - script failover"
+		/ip route add dst-address="$destino/32" gateway=$gateway distance=1 comment="Temporary route - script failover"
 	}
 }
 
 ## function to delete static routes created by script
 ##
 :global delRoute do={
-	/ip route remove [/ip route find comment="Rota Temporaria - script failover"]
+	/ip route remove [/ip route find comment="Temporary route - script failover"]
 }
 
 ## turn off info logs temporarily
