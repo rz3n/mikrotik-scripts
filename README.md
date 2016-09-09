@@ -11,4 +11,4 @@ Scripts, tests and other stuff about mikrotik
 
 **functions.rsc**: Generic functions
 
-**multiroute-failover.rsc**: Dynamic failover script described and discussed (in this reddit post https://www.reddit.com/r/mikrotik/comments/51bdms/multiroute_failover_script/)
+**multiroute-failover.rsc**: Dynamic failover script described and discussed in this reddit (post https://www.reddit.com/r/mikrotik/comments/51bdms/multiroute_failover_script/)
