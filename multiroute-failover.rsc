@@ -3,6 +3,7 @@
 # If you use this script, or edit and
 # re-use it, please keep the header intact.
 # Description (in portuguese): https://www.rfranzen.com.br/2016/05/script-de-failover-redundancia-para.html
+# Tested on: > routeros v6.36
 # ------------------- header -------------------
 
 
@@ -13,7 +14,7 @@
 :local PingTargets { "192.203.230.10"; "198.97.190.53" }
 
 ## Route tables
-:local routeTables { "rota_hospedes"; "rota_adm"; "mail1"; "mail2" }
+:local routeTables { "route_guests"; "route_adm"; "route_mail1"; "route_mail2" }
 
 ## Gateways
 :local gateways { "x.x.x.x"; "x.x.x.x" }
