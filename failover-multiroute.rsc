@@ -35,7 +35,7 @@
 ## function to sent email
 ##
 :global sendEmail do={
-	/tool e-mail send to=suporte@gtek.com.br subject="Mikrotik - Link Down" body=$msg
+	/tool e-mail send to=your@email.com subject="Mikrotik - Link Down" body=$msg
 }
 
 ## function to enable/disable route tables
