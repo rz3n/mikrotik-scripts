@@ -11,4 +11,6 @@ Scripts, tests and other stuff about mikrotik
 
 **functions.rsc**: Generic functions
 
-**multiroute-failover.rsc**: Dynamic failover script described and discussed in this [reddit](post https://www.reddit.com/r/mikrotik/comments/51bdms/multiroute_failover_script/)
+**failover-multiroute.rsc**: Dynamic failover script described and discussed in this [reddit](post https://www.reddit.com/r/mikrotik/comments/51bdms/multiroute_failover_script/)
+
+**failover-ecmp**: Dynamic failover script similar to multiroute but using [ECMP](https://wiki.mikrotik.com/wiki/ECMP_load_balancing_with_masquerade)
