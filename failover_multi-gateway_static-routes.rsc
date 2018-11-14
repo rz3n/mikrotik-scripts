@@ -74,17 +74,6 @@
 
 
 ## --------------------------------------------------------
-## check script run count
-:if ($failoverCount < 100) do={
-  :set failoverCount ($failoverCount + 1);
-} else={
-  ## recreate static routes
-  $delRoute routeComment=$routeComment
-  :set failoverCount 1
-}
-
-
-## --------------------------------------------------------
 ## check routes
 
 ## if the number of static routes isn't correct delete all routes
