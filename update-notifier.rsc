@@ -7,5 +7,8 @@ check-for-updates
 :if ([get installed-version] != [get latest-version]) do={
   :log info "Package update available. Sending email..."
 
-  /tool e-mail send to="$emailAddress" subject="[Mikrotik][$name] - Update Available" body="New update available."
+  /ip address print file=address
+  :local a [/file get address.txt contents]
+
+  /tool e-mail send to="$emailAddress" subject="[Mikrotik][$name] - Update Available" body="New update available. \n\n $a"
 }
