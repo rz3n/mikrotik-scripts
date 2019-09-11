@@ -7,6 +7,7 @@
 
 
 
+# ***********************************************
 # ------------- start editing here -------------
 ## Gateways and remote destinatinos to test
 :local gateways {
@@ -22,24 +23,39 @@
 ## Route tables
 :local routeTables { "from_guest"; "from_adm" }
 
-## loss limit (5 packages sent to each host)
+## loss limit (5 packages send to each host)
 :local LossLimit 3
 
 ## email alerts
 :local email "your@email.com"
+
+## telegram alerts
+:local TelegramToken "TOKEN"
+:local TelegramGroupID "-GROUP ID"
+:local TelegramURL "https://api.telegram.org/bot$TelegramToken/sendMessage?chat_id=$TelegramGroupID&parse_mode=Markdown&text="
+
 # -------------- stop editing here --------------
+# ***********************************************
 
 
 ## --------------------------------------------------------
 ## variables
 :local routeComment "## failover auto"
 :global failoverCount
+:global OSversion [/system resource get version]
+:global SystemName [/system identity get name]
 
 
 ## --------------------------------------------------------
-## function to sent email
+## function to send email
 :local sendEmail do={
   /tool e-mail send to=$email subject="Mikrotik - Link Down" body=$msg
+}
+
+## --------------------------------------------------------
+## function to send telegram
+:local sendTelegram do={
+  /tool fetch keep-result=no url=($TelegramURL . $TelegramMessage)
 }
 
 ## functions to enable/disable logs
@@ -133,6 +149,7 @@
     }
     $errorLogMsg msg=("Gateway " . ($gateways->"$gwTmp") . " offline")
     #$sendEmail msg=("Gateway " . ($gwCount) . " offline")
+    #$sendTelegram TelegramURL=$TelegramURL TelegramMessage=("System: $SystemName %0ARouterOS: $OSversion %0AGateway: " . $gateways->"$gwTmp" . " is *offline*")
   }
 }
 
