@@ -10,28 +10,30 @@
 # ***********************************************
 # ------------- start editing here -------------
 ## Gateways and remote destinatinos to test
-:local gateways {
+:global gateways {
   "gw1"="192.168.1.1";
   "gw1-dst1"="8.8.8.8";
   "gw1-dst2"="1.1.1.1";
   "gw2"="192.168.2.1";
   "gw2-dst1"="208.67.222.222";
-  "gw2-dst2"="1.0.0.1"
+  "gw2-dst2"="1.0.0.1";
 }
 
 
 ## Route tables
-:local routeTables { "from_guest"; "from_adm" }
+:global routeTables { "from_guest"; "from_adm" }
 
 ## loss limit (5 packages send to each host)
-:local LossLimit 3
+:global LossLimit 3
 
 ## email alerts
-:local email "your@email.com"
+:global EmailNotify false
+:global Email "your@email.com"
 
 ## telegram alerts
-:local TelegramToken "TOKEN"
-:local TelegramGroupID "-GROUP ID"
+:global TelegramNotify false
+:global TelegramToken "TOKEN"
+:global TelegramGroupID "-GROUP ID"
 :local TelegramURL "https://api.telegram.org/bot$TelegramToken/sendMessage?chat_id=$TelegramGroupID&parse_mode=Markdown&text="
 
 # -------------- stop editing here --------------
@@ -49,7 +51,7 @@
 ## --------------------------------------------------------
 ## function to send email
 :local sendEmail do={
-  /tool e-mail send to=$email subject="Mikrotik - Link Down" body=$msg
+  /tool e-mail send to=$Email subject="Mikrotik - Link Down" body=$msg
 }
 
 ## --------------------------------------------------------
@@ -147,9 +149,16 @@
     :foreach routetemp in=$routeTables do={
       $setRouteMark gw=($gateways->"$gwTmp") mark=($routetemp) disabled="yes"
     }
+
+    ## notifications
     $errorLogMsg msg=("Gateway " . ($gateways->"$gwTmp") . " offline")
-    #$sendEmail msg=("Gateway " . ($gwCount) . " offline")
-    #$sendTelegram TelegramURL=$TelegramURL TelegramMessage=("System: $SystemName %0ARouterOS: $OSversion %0AGateway: " . $gateways->"$gwTmp" . " is *offline*")
+
+    :if (($EmailNotify)) do={
+      $sendEmail Email=$Email msg=("Gateway " . ($gwCount) . " offline")
+    }
+    :if (($TelegramNotify)) do={
+      $sendTelegram TelegramURL=$TelegramURL TelegramMessage=("System: $SystemName %0ARouterOS: $OSversion %0AGateway: " . $gateways->"$gwTmp" . " is *offline*")
+    }
   }
 }
 
