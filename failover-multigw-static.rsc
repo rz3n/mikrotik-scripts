@@ -28,12 +28,15 @@
 
 ## email alerts
 :global EmailNotify false
+:global EmailNotificationInterval 1800
 :global Email "your@email.com"
 
 ## telegram alerts
 :global TelegramNotify false
+:global TelegramNotificationInterval 1800
 :global TelegramToken "TOKEN"
 :global TelegramGroupID "-GROUP ID"
+
 :local TelegramURL "https://api.telegram.org/bot$TelegramToken/sendMessage?chat_id=$TelegramGroupID&parse_mode=Markdown&text="
 
 # -------------- stop editing here --------------
@@ -47,6 +50,30 @@
 :global OSversion [/system resource get version]
 :global SystemName [/system identity get name]
 
+
+## --------------------------------------------------------
+## function to check notification interval
+:local checkNotificationInterval do={
+  :local startTime [/system clock get time]
+
+  # subtract startTime from endTime to get time elapsed
+  :local finalTime ( $startTime - $lastNotification );
+
+  # convert hours to seconds, add to sum
+  :local sum ( $sum + ( [ :pick $finalTime 0 2 ] * 60 * 60 ));
+
+  # convert minutes to seconds, add to sum
+  :set sum ( $sum + ( [ :pick $finalTime 3 5 ] * 60 ));
+
+  # add seconds to sum
+  :set sum ( $sum + [ :pick $finalTime 6 8 ] );
+
+  :if (($sum < $notificationInterval)) do={
+    return false
+  } else {
+    return true
+  }
+}
 
 ## --------------------------------------------------------
 ## function to send email
@@ -151,14 +178,17 @@
     }
 
     ## notifications
-    $errorLogMsg msg=("Gateway " . ($gateways->"$gwTmp") . " offline")
-
     :if (($EmailNotify)) do={
-      $sendEmail Email=$Email msg=("Gateway " . ($gwCount) . " offline")
+      :if (([$checkNotificationInterval lastNotification=$EmailLastNotification notificationInterval=$EmailNotificationInterval])) do={
+        $sendEmail Email=$Email msg=("Gateway " . ($gwCount) . " offline")
+        :set EmailLastNotification [/system clock get time]
+      }
     }
     :if (($TelegramNotify)) do={
-      $sendTelegram TelegramURL=$TelegramURL TelegramMessage=("System: $SystemName %0ARouterOS: $OSversion %0AGateway: " . $gateways->"$gwTmp" . " is *offline*")
+      :if (([$checkNotificationInterval lastNotification=$TelegramLastNotification notificationInterval=$TelegramNotificationInterval])) do={
+        $sendTelegram TelegramURL=$TelegramURL TelegramMessage=("System: $SystemName %0ARouterOS: $OSversion %0AGateway: " . $gateways->"$gwTmp" . " is *offline*")
+        :set TelegramLastNotification [/system clock get time]
+      }
     }
   }
 }
-

@@ -9,21 +9,36 @@ Feel free to collaborate.
 
 ## scripts
 
-**auto-upgrade-packages.rsc**: Simple script to auto-upgrade RouterOS packages
+### auto-upgrade-packages.rsc
+Simple script to auto-upgrade RouterOS packages
 
-**auto-upgrade-routerboard.rsc**: Simple script to auto-upgrade Routerboard Firmware
 
-**failover-ecmp**: Dynamic failover script similar to multiroute but using [ECMP](https://wiki.mikrotik.com/wiki/ECMP_load_balancing_with_masquerade)
+### auto-upgrade-routerboard.rsc
+Simple script to auto-upgrade Routerboard Firmware
 
-**failover-multiroute.rsc**: Dynamic failover script described and discussed in this [reddit](post https://www.reddit.com/r/mikrotik/comments/51bdms/multiroute_failover_script/)
 
-**failover_multi-gateway_static-routes.rsc**: Similar to ***failover-multiroute***. The script will create static routes to pre-defined destinations to use in tests.
+### failover-ecmp
+Dynamic failover script similar to multiroute but using [ECMP](https://wiki.mikrotik.com/wiki/ECMP_load_balancing_with_masquerade)
 
-**functions.rsc**: Generic (and not updated) functions.
 
-**update-notifier.rsc**: Notify if there are updates available.
+### failover-multigw-dynamic.rsc
+**Outdated script. I don't use it anymore**
+Dynamic failover script described and discussed in this [reddit](post https://www.reddit.com/r/mikrotik/comments/51bdms/multiroute_failover_script/)
+
+
+### failover-multigw-static.rsc
+Similar to ***failover-multigw***. The script will create static routes to pre-defined destinations to use in tests.
+
+It's very customizable. You can set notifications using Email and/or Telegram.
+
+
+### functions.rsc
+Generic (and not updated) functions.
+
+
+### update-notifier.rsc
+Notify if there are updates available.
 
 
 ## To-do
-
-* Fail Over script: Improve notifications by setting a minimum interval between messages.
+* Improve this documentation
