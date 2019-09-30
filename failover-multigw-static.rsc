@@ -12,11 +12,8 @@
 ## Gateways and remote destinatinos to test
 :global gateways {
   "gw1"="192.168.1.1";
-  "gw1-dst1"="8.8.8.8";
-  "gw1-dst2"="1.1.1.1";
   "gw2"="192.168.2.1";
-  "gw2-dst1"="208.67.222.222";
-  "gw2-dst2"="1.0.0.1";
+  "gw3"="pppoe-client";
 }
 
 
@@ -45,10 +42,20 @@
 
 ## --------------------------------------------------------
 ## variables
-:local routeComment "## failover auto"
+:global EmailLastNotification
 :global failoverCount
 :global OSversion [/system resource get version]
 :global SystemName [/system identity get name]
+:global TelegramLastNotification
+:local routeComment "## failover auto"
+:local testIPs {
+  "198.97.190.53";
+  "192.112.36.4";
+  "192.58.128.30";
+  "206.196.176.131";
+  "199.7.83.42";
+  "128.9.168.105";
+}
 
 
 ## --------------------------------------------------------
@@ -122,22 +129,18 @@
 ## check routes
 
 ## if the number of static routes isn't correct delete all routes
-:if ([:len [/ip route find comment="$routeComment"]] != (([:len $gateways]/3)*2)) do={
+:if ([:len [/ip route find comment="$routeComment"]] != ([:len $gateways]*2)) do={
   $delRoute routeComment=$routeComment
 
-  :local dst1Tmp 0
-  :local dst2Tmp 0
+  :local dstCount 0
   :local gwCount 0
-  :local gwTmp 0
 
   ## creates two random routes for each gateway
-  :for gwCount from=1 to=([:len $gateways]/3) do={
-    :set gwTmp ("gw" . $gwCount)
-    :set dst1Tmp ("gw" . $gwCount . "-dst1")
-    :set dst2Tmp ("gw" . $gwCount . "-dst2")
-
-    $addRoute destination=($gateways->"$dst1Tmp") gateway=($gateways->"$gwTmp") routeComment=$routeComment
-    $addRoute destination=($gateways->"$dst2Tmp") gateway=($gateways->"$gwTmp") routeComment=$routeComment
+  :for gwCount from=0 to=([:len $gateways]-1) do={
+    $addRoute destination=($testIPs->"$dstCount") gateway=($gateways->"$gwCount") routeComment=$routeComment
+    :set dstCount ($dstCount+1)
+    $addRoute destination=($testIPs->"$dstCount") gateway=($gateways->"$gwCount") routeComment=$routeComment
+    :set dstCount ($dstCount+1)
   }
 }
 
@@ -147,18 +150,16 @@
 ## Tests
 :local gwCount 0
 
-:for gwCount from=1 to=([:len $gateways]/3) do={
+:for gwCount from=0 to=([:len $gateways]-1) do={
   :local cont 0
   :local desttemp 0
-  :local gwTmp 0
   :local routetemp 0
   :set $icmp 0
-  :set gwTmp ("gw" . $gwCount)
 
   ## ping to targets
   :for cont from=1 to=5 do={
     ## get current destinations in route table
-    :foreach i in=[/ip route find comment=$routeComment gateway=($gateways->"$gwTmp")] do={
+    :foreach i in=[/ip route find comment=$routeComment gateway=($gateways->"$gwCount")] do={
       :local targetTest [/ip route get $i dst-address]
       :set targetTest [:pick $targetTest 0 [:find $targetTest "/" -1]];
 
@@ -170,12 +171,13 @@
   ## if package loss <= limit, disable gateway; else enable gateway
   :if (($icmp <= $LossLimit)) do={
     :foreach routetemp in=$routeTables do={
-      $setRouteMark gw=($gateways->"$gwTmp") mark=($routetemp) disabled="no"
+      $setRouteMark gw=($gateways->"$gwCount") mark=($routetemp) disabled="no"
     }
   } else {
     :foreach routetemp in=$routeTables do={
-      $setRouteMark gw=($gateways->"$gwTmp") mark=($routetemp) disabled="yes"
+      $setRouteMark gw=($gateways->"$gwCount") mark=($routetemp) disabled="yes"
     }
+    $errorLogMsg msg=("Gateway " . ($gateways->"$gwCount") . " offline")
 
     ## notifications
     :if (($EmailNotify)) do={
