@@ -4,6 +4,10 @@
 # re-use it, please keep the header intact.
 # Description (in portuguese): https://www.rfranzen.com.br/2016/05/script-de-failover-redundancia-para.html
 # Tested on: routeros >v6.36
+# ----------------------------------------------
+# This script creates and delete the routes on
+# each test. It will create a lot of log entries.
+# But the script works well. I'll no longer update this file.
 # ------------------- header -------------------
 
 
