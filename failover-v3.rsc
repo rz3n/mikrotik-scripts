@@ -49,7 +49,7 @@
 ## variables
 :global failOverEmailLastNotification
 :global failOverTelegramLastNotification
-:global failOverTestIPs
+:global failOverTestIPs { "" }
 :global OSversion [/system resource get version]
 :global SystemName [/system identity get name]
 :global SystemSerial [/system routerboard get serial-number]
