@@ -11,9 +11,9 @@
 # ------------- start editing here -------------
 ## Gateways and remote destinatinos to test
 :global gateways {
-  "gw1"="192.168.1.1";
-  "gw2"="192.168.2.1";
-  "gw3"="pppoe-client";
+  "192.168.1.1";
+  "192.168.2.1";
+  "pppoe-client";
 }
 
 
